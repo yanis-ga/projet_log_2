@@ -1,0 +1,8 @@
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\bin\Debug\C#_project_log.exe.config
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\bin\Debug\C#_project_log.exe
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\bin\Debug\C#_project_log.pdb
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\obj\Debug\C#_project_log.csproj.AssemblyReference.cache
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\obj\Debug\C#_project_log.csproj.CoreCompileInputs.cache
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\obj\Debug\C#_project_log.exe
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\obj\Debug\C#_project_log.pdb
+C:\Users\YanisGASSA\source\repos\C#_project_log\C#_project_log\obj\Debug\C#_project_log.exe.config
