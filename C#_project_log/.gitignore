@@ -2,3 +2,8 @@
 obj/
 obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 .vs/
+
+/C#_project_log.sln
+/Wpf_project_log.sln
+/.vs
+/C#_project_log/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
