@@ -1,0 +1,47 @@
+﻿## Build Folders ##
+bin/
+obj/
+
+## User-specific files ##
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## VS Code ##
+.vscode/
+.history/
+
+## Rider ##
+.idea/
+*.sln.iml
+
+## Logs and databases ##
+*.log
+
+## OS-generated files ##
+.DS_Store
+Thumbs.db
+
+## NuGet packages ##
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Auto-generated files ##
+Generated_Code/
+
+## Publish output ##
+publish/
+*.Publish.xml
+
+## Others ##
+_ReSharper*/
+*.resharper
+*.vs/
+
+# Avoid pushing CSV logs if they exist in the project
+*.csv
