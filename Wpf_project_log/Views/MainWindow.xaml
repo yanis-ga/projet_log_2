@@ -1,61 +1,81 @@
 ﻿<Window x:Class="Wpf_project_log.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Wpf_project_log.ViewModels"
+        xmlns:local="clr-namespace:Wpf_project_log.ViewModels"
         Title="Log Viewer"
         Height="500" Width="800"
         WindowStartupLocation="CenterScreen">
 
-    <Window.DataContext>
-        <vm:MainViewModel />
-    </Window.DataContext>
-
-    <!--Table for data -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/> <!-- Filter + ListBox -->           
+            <RowDefinition Height="*"/> <!-- DataGrid -->
         </Grid.RowDefinitions>
 
-        <!-- Filter Input + Buttons -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 10">
-            <TextBox Width="300"
-                     Margin="0 0 10 0"
-                     VerticalAlignment="Center"
-                     Text="{Binding FilterKeyword, UpdateSourceTrigger=PropertyChanged}" 
-                     ToolTip="Enter keyword to filter"/>
+        <!-- TextBox + ListBox + Buttons aligned -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 10" VerticalAlignment="Top">
 
+            <!-- Bloc TextBox + ListBox -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- TextBox -->
+                    <RowDefinition Height="Auto"/>  <!-- ListBox -->
+                </Grid.RowDefinitions>
+
+                <TextBox x:Name="SearchTextBox"
+                         Grid.Row="0"
+                         Width="300"
+                         Margin="0 0 0 0"
+                         VerticalAlignment="Top"
+                         Text="{Binding FilterKeyword, UpdateSourceTrigger=PropertyChanged}" 
+                         ToolTip="Enter keyword to filter"
+                         GotFocus="SearchTextBox_GotFocus"
+                         LostFocus="SearchTextBox_LostFocus"/>
+
+                <ListBox x:Name="SearchHistoryListBox"
+                         Grid.Row="1"
+                         Width="300"
+                         MaxHeight="100"
+                         Margin="0 2 0 0"
+                         Background="White"
+                         BorderBrush="Gray"
+                         BorderThickness="1"
+                         Visibility="Collapsed"
+                         SelectionChanged="SearchHistoryListBox_SelectionChanged"/>
+            </Grid>
+
+            <!-- Buttons -->
             <Button Content="Filtrer"
                     Command="{Binding FilterCommand}"
+                    Click="FilterButton_Click"
                     Width="80"
-                    Margin="0 0 10 0"
-                    VerticalAlignment="Center"/>
+                    Margin="10 0 10 0"
+                    VerticalAlignment="Top"/>
 
             <Button Content="Exporter"
                     Command="{Binding ExportCommand}"
                     Width="100"
-                    VerticalAlignment="Center"/>
+                    VerticalAlignment="Top"/>
 
             <Button Content="Importer CSV"
-                Command="{Binding ImportCommand}"
-                Width="100"
-                VerticalAlignment="Center"
-                Margin="0 0 10 0"/>
+                    Command="{Binding ImportCommand}"
+                    Width="100"
+                    VerticalAlignment="Top"
+                    Margin="10 0 0 0"/>
         </StackPanel>
 
-        <!-- DataGrid to show logs -->
-        <DataGrid Grid.Row="2"
+        <!-- Datagrid to show logs -->
+        <DataGrid Grid.Row="1"
                   ItemsSource="{Binding FilteredLogs}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Timestamp" Binding="{Binding TimeStamp}" Width="150"/>
-                <DataGridTextColumn Header="Message" Binding="{Binding EventMessage}" Width="*"/>
+                <DataGridTextColumn Header="TimeStamp" Binding="{Binding TimeStamp}" Width="150"/>
+                <DataGridTextColumn Header="EventMessage" Binding="{Binding EventMessage}" Width="*"/>
                 <DataGridTextColumn Header="CallStack" Binding="{Binding CallStack}" Width="*"/>
                 <DataGridTextColumn Header="ErrorCallStack" Binding="{Binding ErrorCallStack}" Width="*"/>
-                <DataGridTextColumn Header="Task" Binding="{Binding TaskName}" Width="150"/>
+                <DataGridTextColumn Header="TaskName" Binding="{Binding TaskName}" Width="150"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -45,3 +45,5 @@ _ReSharper*/
 
 # Avoid pushing CSV logs if they exist in the project
 *.csv
+
+/Wpf_project_log/search_history.txt

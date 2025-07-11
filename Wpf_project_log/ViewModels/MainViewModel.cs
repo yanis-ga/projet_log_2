@@ -1,8 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
@@ -12,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using Wpf_project_log.Models;
 using Wpf_project_log.Helpers;
+using Wpf_project_log.Views;
 
 namespace Wpf_project_log.ViewModels
 {
@@ -27,48 +25,14 @@ namespace Wpf_project_log.ViewModels
             set => SetProperty(ref _filteredLogs, value);
         }
 
-        // === choice column for the user ===
-        //public ObservableCollection<string> AvailableColumns { get; } = new ObservableCollection<string>
-        //{
-        //    "TimeStamp", "EventMessage", "CallStack", "ErrorCallStack", "TaskName"
-        //};
 
-        //private ObservableCollection<string> _visibleColumns = new ObservableCollection<string>();
-        //public ObservableCollection<string> VisibleColumns
-        //{
-        //    get => _visibleColumns;
-        //    set
-        //    {
-        //        if (SetProperty(ref _visibleColumns, value))
-        //            SaveColumnPreferences(); // Sauvegarde automatique dès changement
-        //    }
-        //}
-
-        // for save the column
-        //private void SaveColumnPreferences()
-        //{
-        //    File.WriteAllText(ColumnConfigPath, string.Join(",", VisibleColumns));
-        //}
-
-        //private readonly string ColumnConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "columns.config");
-        //private void LoadColumnPreferences()
-        //{
-        //    if (File.Exists(ColumnConfigPath))
-        //    {
-        //        var cols = File.ReadAllText(ColumnConfigPath)
-        //            .Split(',')
-        //            .Select(c => c.Trim())
-        //            .Where(c => AvailableColumns.Contains(c));
-
-        //        VisibleColumns = new ObservableCollection<string>(cols);
-        //    }
-        //    else
-        //    {
-        //        // Par défaut, tout afficher
-        //        VisibleColumns = new ObservableCollection<string>(AvailableColumns);
-        //    }
-        //    VisibleColumns.CollectionChanged += (s, e) => SaveColumnPreferences();
-        //}
+        // for save the last search
+        private ObservableCollection<string> _searchHistory = new ObservableCollection<string>();
+        public ObservableCollection<string> SearchHistory
+        {
+            get => _searchHistory;
+            set => SetProperty(ref _searchHistory, value);
+        }
 
 
         // === getter and setters for filterKeyword ===
@@ -101,8 +65,6 @@ namespace Wpf_project_log.ViewModels
                 .Select(c => c.Trim().ToUpper())
                 .ToList();
 
-            //LoadColumnPreferences();
-            //LoadLogs();
 
             // use constructor from RelayCommand.cs
             FilterCommand = new RelayCommand(ExecuteFilter);
@@ -114,13 +76,6 @@ namespace Wpf_project_log.ViewModels
                 && FilteredLogs != null
                 && FilteredLogs.Any();
         }
-
-
-        //private void LoadLogs()
-        //{
-        //    string filePath = ConfigurationManager.AppSettings["CsvLogFile"];
-        //    LoadLogsFromFile(filePath);
-        //}
 
 
         // === for load log from csv ===
@@ -147,11 +102,22 @@ namespace Wpf_project_log.ViewModels
 
                 while (!parser.EndOfData)
                 {
-                    string[] fields;
-                    try { fields = parser.ReadFields(); }
+                    string[]? fields;
+                    try
+                    {
+                        fields = parser.ReadFields();
+                    }
                     catch (MalformedLineException) { continue; }
 
-                    if (fields.Length == 0) continue;
+
+                    if (fields != null)
+                    {
+                        if (fields.Length == 0) continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
 
                     int tsIndex = headerIndexes.TryGetValue("TIMESTAMP", out int tsVal) ? tsVal : -1;
                     int csIndex = headerIndexes.TryGetValue("CALLSTACK", out int csVal) ? csVal : -1;
@@ -166,7 +132,7 @@ namespace Wpf_project_log.ViewModels
                         out DateTime timestamp
                     );
 
-                    logs.Add(new LogEntry
+                    logs.Add(new LogEntry // use LogEntry object
                     {
                         TimeStamp = timestamp,
                         CallStack = csIndex >= 0 ? fields[csIndex] : "",
@@ -184,6 +150,7 @@ namespace Wpf_project_log.ViewModels
         // Icommand action for import csv file
         public ICommand ImportCommand => new RelayCommand(ImportCsvFile);
 
+
         // === open download file ===
         private void ImportCsvFile(object parameter)
         {
@@ -199,6 +166,7 @@ namespace Wpf_project_log.ViewModels
             }
         }
 
+
         // === for filter the logs ===
         // ICommand action for ExecuteFilter
         private void ExecuteFilter(object parameter)
@@ -207,6 +175,24 @@ namespace Wpf_project_log.ViewModels
             {
                 FilteredLogs = new ObservableCollection<LogEntry>(_allLogs);
                 return;
+            }
+
+            // search history gestion
+            if (!SearchHistory.Contains(FilterKeyword))
+            {
+                SearchHistory.Insert(0, FilterKeyword);
+            }
+            else
+            {
+                // if already present, then move it to the top
+                SearchHistory.Remove(FilterKeyword);
+                SearchHistory.Insert(0, FilterKeyword);
+            }
+
+            // keep the last five
+            while (SearchHistory.Count > 5)
+            {
+                SearchHistory.RemoveAt(SearchHistory.Count - 1);
             }
 
             string keyword = FilterKeyword.ToLowerInvariant();
@@ -269,4 +255,4 @@ namespace Wpf_project_log.ViewModels
             System.Windows.MessageBox.Show("Export completed :\n" + exportPath, "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
     }
-}// test
+}
