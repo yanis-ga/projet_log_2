@@ -2,14 +2,16 @@
 
 ## Description
 
-A project to analyze logs by reading CSV files
+In the 1st solution C#_project_log on dev branch :
+
+A project to analyze logs by reading CSV files on command line.
 
 ## Getting Started
 
 ### Installing
 
 * Git clone the project and run into your IDE : VS Code Community
-* !! Don't forget to add the CSV LOG file in your "download folder" on your computer
+* !! Don't forget to add the CSV LOG file in your "download folder" on your computer and rename this file to "Log_Entity.csv"
 
 ### Executing program
 
